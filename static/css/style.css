@@ -1,0 +1,123 @@
+/* La page et la carte occupent tout l'écran, sans marge ni barre de défilement */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+/* Affichage des coordonnées du curseur */
+.coords-control {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;   /* chiffres de largeur fixe : le texte ne "saute" pas */
+    font-size: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Boutons posés sur la carte (Vue Maroc, puis ceux de F5 et F6) */
+.bouton-carte {
+    background: #fff;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.bouton-carte:hover {
+    background: #f4f4f4;
+}
+
+/* Panneau F4 : saisie des coordonnées */
+.panneau-carte {
+    background: #fff;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 13px;
+    width: 210px;
+}
+
+.panneau-titre {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.panneau-carte label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.panneau-carte input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;   /* la largeur inclut le padding : le champ ne déborde pas */
+    margin-top: 2px;
+    padding: 4px;
+}
+
+.message-erreur {
+    color: #c0392b;
+    margin-top: 6px;
+}
+
+.message-erreur:empty {
+    display: none;   /* pas d'espace vide quand il n'y a pas d'erreur */
+}
+
+/* F5 : boutons « Nouvelle parcelle » et « Annuler », l'un sous l'autre */
+.groupe-boutons .bouton-carte {
+    display: block;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+/* F5 : formulaire flottant, centré en haut de l'écran */
+.panneau-flottant {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);   /* centrage horizontal */
+    z-index: 1100;                 /* au-dessus de la carte et de ses contrôles */
+    width: 260px;
+    background: #fff;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;   /* même police que Leaflet */
+    font-size: 13px;
+}
+
+.panneau-flottant label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.panneau-flottant input,
+.panneau-flottant select {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 2px;
+    padding: 4px;
+}
+
+.panneau-flottant input[readonly] {
+    background: #eee;   /* montre que la superficie n'est pas modifiable */
+}
+
+.boutons-formulaire {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.bouton-carte:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriParcelles</title>
+    <link rel="icon" href="data:,">   <!-- pas d'icône : évite la requête /favicon.ico -->
+
+    <!-- Feuilles de style : Leaflet, Leaflet-Geoman (dessin, F5), application -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2/dist/leaflet-geoman.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Conteneur de la carte : occupe tout l'écran -->
+    <div id="map"></div>
+
+    <!-- F5 : formulaire de la nouvelle parcelle, masqué tant qu'aucun polygone n'est terminé -->
+    <div id="panneau-parcelle" class="panneau-flottant" hidden>
+        <form id="form-parcelle" novalidate>
+            <div class="panneau-titre">Nouvelle parcelle</div>
+
+            <label>Numéro de parcelle *
+                <input type="text" id="champ-num" maxlength="30">
+            </label>
+            <label>Nom de l'agriculteur *
+                <input type="text" id="champ-agriculteur" maxlength="100">
+            </label>
+            <label>Culture *
+                <select id="champ-culture">
+                    <option value="">— Choisir —</option>
+                    <option>Blé dur</option>
+                    <option>Blé tendre</option>
+                    <option>Orge</option>
+                    <option>Maïs</option>
+                    <option>Betterave sucrière</option>
+                    <option>Olivier</option>
+                    <option>Agrumes</option>
+                    <option>Maraîchage</option>
+                    <option>Luzerne</option>
+                    <option>Jachère</option>
+                    <option>Autre</option>
+                </select>
+            </label>
+            <label>Superficie (ha)
+                <input type="text" id="champ-superficie" readonly>
+            </label>
+            <label>Production (t) *
+                <input type="text" id="champ-production" inputmode="decimal">
+            </label>
+
+            <div id="message-parcelle" class="message-erreur"></div>
+
+            <div class="boutons-formulaire">
+                <button type="submit" id="bouton-enregistrer" class="bouton-carte">Enregistrer</button>
+                <button type="button" id="bouton-annuler-form" class="bouton-carte">Annuler</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Leaflet, puis Geoman (qui s'appuie sur Leaflet), puis nos scripts, chacun UNE seule fois -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2/dist/leaflet-geoman.min.js"></script>
+    <script src="/static/js/map.js"></script>
+    <script src="/static/js/parcelles.js"></script>
+</body>
+</html>

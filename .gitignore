@@ -1,0 +1,20 @@
+# Environnement virtuel Python (recréé à partir de requirements.txt)
+venv/
+
+# Fichiers compilés par Python
+__pycache__/
+*.pyc
+
+# Fichiers temporaires de test
+Test
+parcelle_test.py
+test_gee.py
+
+# Variables d'environnement (identifiant du projet GEE…)
+.env
+
+# Fichier temporaire de SQLite, fichiers système et éditeur
+*.sqlite-journal
+.vscode/
+Thumbs.db
+desktop.ini
