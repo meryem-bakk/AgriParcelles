@@ -1,0 +1,93 @@
+# agriparcelles.map — Bonus MapServer
+# Publie la couche parcelles de data/agriparcelles.sqlite en WMS,
+# avec une couleur par culture et des étiquettes calculées côté serveur.
+MAP
+  NAME "agriparcelles"
+  STATUS ON
+  SIZE 800 600
+  UNITS DD
+  EXTENT -17.5 20.5 -0.9 36.1            # emprise du Maroc, en degrés (WGS84)
+  IMAGETYPE PNG
+
+  # Système de coordonnées de la carte
+  PROJECTION
+    "init=epsg:4326"
+  END
+
+  # Service WMS
+  WEB
+    METADATA
+      "wms_title"          "AgriParcelles — MapServer"
+      "wms_onlineresource" "http://localhost:8080/cgi-bin/mapserv.exe?map=AGRIPARCELLES&"
+      "wms_srs"            "EPSG:4326 EPSG:3857"   # EPSG:3857 = projection utilisée par Leaflet
+      "wms_enable_request" "*"
+    END
+  END
+
+  # Légende (requête GetLegendGraphic), écrite avec la police intégrée à MapServer
+  LEGEND
+    KEYSIZE 18 12
+    LABEL
+      SIZE 9
+      COLOR 0 0 0
+    END
+  END
+
+  # ---------- Couche 1 : parcelles colorées selon leur culture ----------
+  LAYER
+    NAME "parcelles"
+    TYPE POLYGON
+    STATUS ON
+    CONNECTIONTYPE OGR
+    CONNECTION "C:/AgriParcelles/data/agriparcelles.sqlite"   # la même base que Flask
+    DATA "parcelles"                                          # nom de la table
+    PROJECTION
+      "init=epsg:4326"
+    END
+    METADATA
+      "wms_title" "Parcelles par culture"
+    END
+    COMPOSITE
+      OPACITY 70                        # 70 % : l'image satellite reste visible dessous
+    END
+    CLASSITEM "culture"                 # la couleur dépend de la colonne culture
+    CLASS NAME "Blé dur"            EXPRESSION "Blé dur"            STYLE COLOR 230 190 60  OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Blé tendre"         EXPRESSION "Blé tendre"         STYLE COLOR 245 220 120 OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Orge"               EXPRESSION "Orge"               STYLE COLOR 200 160 90  OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Maïs"               EXPRESSION "Maïs"               STYLE COLOR 255 215 0   OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Betterave sucrière" EXPRESSION "Betterave sucrière" STYLE COLOR 180 70 140  OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Olivier"            EXPRESSION "Olivier"            STYLE COLOR 110 130 40  OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Agrumes"            EXPRESSION "Agrumes"            STYLE COLOR 255 130 0   OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Maraîchage"         EXPRESSION "Maraîchage"         STYLE COLOR 40 170 80   OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Luzerne"            EXPRESSION "Luzerne"            STYLE COLOR 140 210 120 OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Jachère"            EXPRESSION "Jachère"            STYLE COLOR 170 120 80  OUTLINECOLOR 40 40 40 END END
+    CLASS NAME "Autre"              EXPRESSION "Autre"              STYLE COLOR 160 160 160 OUTLINECOLOR 40 40 40 END END
+  END
+
+  # ---------- Couche 2 : numéros des parcelles, visibles seulement en zoomant ----------
+  LAYER
+    NAME "etiquettes"
+    TYPE POLYGON
+    STATUS ON
+    CONNECTIONTYPE OGR
+    CONNECTION "C:/AgriParcelles/data/agriparcelles.sqlite"
+    DATA "parcelles"
+    PROJECTION
+      "init=epsg:4326"
+    END
+    METADATA
+      "wms_title" "Numéros des parcelles"
+    END
+    MAXSCALEDENOM 30000                 # affichées seulement à grande échelle (zoom ≥ 15 environ)
+    LABELITEM "num_parcelle"            # le texte vient de la colonne num_parcelle
+    CLASS
+      NAME "Numéro de parcelle"
+      LABEL
+        SIZE 9
+        COLOR 0 0 0
+        OUTLINECOLOR 255 255 255        # liseré blanc : lisible sur le satellite
+        POSITION CC                     # au centre du polygone
+      END
+    END
+  END
+END

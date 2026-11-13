@@ -200,6 +200,10 @@ formParcelle.addEventListener("submit", async function (e) {
         dessinEnCours = null;
         panneauParcelle.hidden = true;
         coucheParcelles.addData(resultat);   // la parcelle apparaît aussitôt, en jaune
+        // Bonus MapServer : redemander les images WMS pour y voir la nouvelle parcelle
+        if (typeof coucheWms !== "undefined") {
+            coucheWms.setParams({ maj: Date.now() });
+        }
     } catch (err) {
         messageParcelle.textContent = "Erreur de communication avec le serveur : " + err.message;
     } finally {
