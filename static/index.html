@@ -58,10 +58,20 @@
         </form>
     </div>
 
+        <!-- F6 : fenêtre flottante du NDVI, déplaçable par sa barre de titre -->
+    <div id="fenetre-ndvi" class="fenetre-flottante" hidden>
+        <div id="entete-ndvi" class="fenetre-entete">
+            <span id="titre-ndvi">NDVI</span>
+            <button type="button" id="fermer-ndvi" class="bouton-fermer" title="Fermer">×</button>
+        </div>
+        <iframe id="iframe-ndvi" title="Calcul du NDVI de la parcelle"></iframe>
+    </div>
+
     <!-- Leaflet, puis Geoman (qui s'appuie sur Leaflet), puis nos scripts, chacun UNE seule fois -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2/dist/leaflet-geoman.min.js"></script>
     <script src="/static/js/map.js"></script>
     <script src="/static/js/parcelles.js"></script>
+    <script src="/static/js/ndvi.js"></script>
 </body>
 </html>
