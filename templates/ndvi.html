@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>NDVI — parcelle {{ num }}</title>
+    <link rel="icon" href="data:,">
+    <style>
+        body { font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; font-size: 13px; margin: 12px; color: #222; }
+        label { display: block; margin-bottom: 8px; }
+        input { display: block; width: 100%; box-sizing: border-box; margin-top: 2px; padding: 4px; }
+        input[readonly] { background: #eee; }
+        button { padding: 6px 12px; cursor: pointer; }
+        button:disabled { opacity: 0.5; cursor: wait; }
+        .erreur { color: #c0392b; margin-top: 8px; }
+        .erreur:empty { display: none; }
+        #chargement { margin-top: 10px; color: #555; }
+        .spinner { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: middle;
+                   border: 2px solid #ccc; border-top-color: #2e7d32; border-radius: 50%;
+                   animation: tourner 0.8s linear infinite; }
+        @keyframes tourner { to { transform: rotate(360deg); } }
+        #resultat { margin-top: 12px; padding: 8px 10px; background: #f3f7f3; border-radius: 4px; line-height: 1.7; }
+        .valeur { font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <form id="form-ndvi" novalidate>
+        <label>Numéro de parcelle
+            <input type="text" id="champ-num" value="{{ num }}" readonly>
+        </label>
+        <label>Date de début
+            <input type="date" id="champ-debut" min="2019-01-01">
+        </label>
+        <label>Date de fin
+            <input type="date" id="champ-fin" min="2019-01-01">
+        </label>
+        <button type="submit" id="bouton-calculer">Calculer le NDVI</button>
+        <div id="message" class="erreur"></div>
+    </form>
+
+    <!-- Indicateur de chargement, visible pendant le calcul -->
+    <div id="chargement" hidden><span class="spinner"></span>Calcul en cours sur Google Earth Engine…</div>
+
+    <!-- Résultat, affiché après un calcul réussi -->
+    <div id="resultat" hidden>
+        <div>NDVI moyen : <span class="valeur" id="res-ndvi"></span></div>
+        <div>Images utilisées : <span id="res-images"></span></div>
+        <div>Interprétation : <b id="res-interpretation"></b></div>
+        <div id="res-periode"></div>
+    </div>
+
+    <script>
+        // Règles de dates imposées par le guide
+        const DATE_MIN = "2019-01-01";
+        const ECART_MIN_JOURS = 10;
+
+        const form = document.getElementById("form-ndvi");
+        const champDebut = document.getElementById("champ-debut");
+        const champFin = document.getElementById("champ-fin");
+        const bouton = document.getElementById("bouton-calculer");
+        const message = document.getElementById("message");
+        const chargement = document.getElementById("chargement");
+        const resultat = document.getElementById("resultat");
+
+        // Une date au format AAAA-MM-JJ (celui des champs de type date)
+        function dateISO(d) {
+            const mois = String(d.getMonth() + 1).padStart(2, "0");
+            const jour = String(d.getDate()).padStart(2, "0");
+            return d.getFullYear() + "-" + mois + "-" + jour;
+        }
+
+        // AAAA-MM-JJ -> JJ/MM/AAAA, pour l'affichage
+        function dateFr(iso) {
+            return iso.split("-").reverse().join("/");
+        }
+
+        // Nombre de jours entre deux dates AAAA-MM-JJ
+        function ecartJours(debut, fin) {
+            return (Date.parse(fin) - Date.parse(debut)) / 86400000;
+        }
+
+        // Valeurs proposées au départ : les 60 derniers jours ; la fin ne peut pas dépasser aujourd'hui
+        const aujourdHui = dateISO(new Date());
+        const ilYa60Jours = new Date();
+        ilYa60Jours.setDate(ilYa60Jours.getDate() - 60);
+        champDebut.max = aujourdHui;
+        champFin.max = aujourdHui;
+        champDebut.value = dateISO(ilYa60Jours);
+        champFin.value = aujourdHui;
+
+        // Contrôles des dates. Renvoie un message d'erreur, ou "" si tout va bien.
+        // Les dates AAAA-MM-JJ se comparent directement comme du texte.
+        function verifierDates(debut, fin) {
+            if (!debut || !fin) return "Saisissez une date de début et une date de fin.";
+            if (debut < DATE_MIN) return "La date de début doit être le 01/01/2019 ou après.";
+            if (fin > aujourdHui) return "La date de fin ne peut pas dépasser la date du jour.";
+            if (debut >= fin) return "La date de début doit précéder la date de fin.";
+            if (ecartJours(debut, fin) < ECART_MIN_JOURS) return "L'écart entre les deux dates doit être d'au moins 10 jours.";
+            return "";
+        }
+
+        // Grille d'interprétation du guide
+        function interpreter(ndvi) {
+            if (ndvi < 0.2) return "sol nu ou végétation très faible";
+            if (ndvi < 0.4) return "végétation faible";
+            if (ndvi <= 0.6) return "végétation modérée";
+            return "végétation dense";
+        }
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const debut = champDebut.value;
+            const fin = champFin.value;
+
+            resultat.hidden = true;
+            message.textContent = verifierDates(debut, fin);
+            if (message.textContent) return;
+
+            // Pendant le calcul : bouton désactivé, indicateur visible
+            bouton.disabled = true;
+            chargement.hidden = false;
+            try {
+                const parametres = new URLSearchParams({
+                    num: document.getElementById("champ-num").value,
+                    debut: debut,
+                    fin: fin
+                });
+                const reponse = await fetch("/api/ndvi?" + parametres);
+                const donnees = await reponse.json();
+
+                if (!reponse.ok) {
+                    message.textContent = donnees.erreur;   // 400, 404, 422, 500 ou 502 : message du serveur
+                    return;
+                }
+
+                document.getElementById("res-ndvi").textContent = donnees.ndvi_moyen.toFixed(3);
+                document.getElementById("res-images").textContent = donnees.nb_images;
+                document.getElementById("res-interpretation").textContent = interpreter(donnees.ndvi_moyen);
+                document.getElementById("res-periode").textContent =
+                    "Période : du " + dateFr(donnees.debut) + " au " + dateFr(donnees.fin);
+                resultat.hidden = false;
+            } catch (err) {
+                message.textContent = "Erreur de communication avec le serveur : " + err.message;
+            } finally {
+                bouton.disabled = false;
+                chargement.hidden = true;
+            }
+        });
+    </script>
+</body>
+</html>

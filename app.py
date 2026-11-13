@@ -4,10 +4,13 @@ Lancement : python app.py, puis http://127.0.0.1:5000
 """
 import json
 import sqlite3
+from datetime import date
 
-from flask import Flask, jsonify, request
+import ee
+from flask import Flask, jsonify, render_template, request
 
 from db import get_connection
+from gee_ndvi import AucuneImageError, calculer_ndvi
 
 # Flask sert automatiquement le contenu du dossier static/ sous l'adresse /static/...
 app = Flask(__name__)
@@ -62,7 +65,27 @@ def analyser_geometrie(conn, geojson_texte):
     ).fetchone()
     return ligne["valide"] == 1, ligne["superficie_ha"]
 
+# Règles de dates imposées par le guide (F6)
+DATE_MIN = date(2019, 1, 1)
+ECART_MIN_JOURS = 10
 
+
+def verifier_dates(debut_txt, fin_txt):
+    """Contrôle les dates du calcul NDVI. Renvoie un message d'erreur, ou "" si tout va bien."""
+    try:
+        debut = date.fromisoformat(debut_txt)
+        fin = date.fromisoformat(fin_txt)
+    except (TypeError, ValueError):
+        return "Dates invalides : format attendu AAAA-MM-JJ."
+    if debut < DATE_MIN:
+        return "La date de début doit être le 01/01/2019 ou après."
+    if fin > date.today():
+        return "La date de fin ne peut pas dépasser la date du jour."
+    if debut >= fin:
+        return "La date de début doit précéder la date de fin."
+    if (fin - debut).days < ECART_MIN_JOURS:
+        return "L'écart entre les deux dates doit être d'au moins 10 jours."
+    return ""
 # ---------- Routes ----------
 
 @app.route("/")
@@ -166,6 +189,58 @@ def creer_parcelle():
 
     return jsonify(ligne_vers_feature(ligne)), 201
 
+@app.route("/ndvi")
+def page_ndvi():
+    """F6 — Page chargée dans l'iframe : formulaire de calcul du NDVI."""
+    num = request.args.get("num", "").strip()
+    if not num:
+        return "Paramètre num manquant dans l'adresse.", 400
+    # Flask remplit le modèle templates/ndvi.html ; {{ num }} y est échappé automatiquement
+    return render_template("ndvi.html", num=num)
+
+
+@app.route("/api/ndvi", methods=["GET"])
+def api_ndvi():
+    """F6 — NDVI moyen Sentinel-2 d'une parcelle, par le traitement GEE imposé."""
+    num = request.args.get("num", "").strip()
+    debut = request.args.get("debut", "")
+    fin = request.args.get("fin", "")
+
+    # 1. Contrôle des dates (le serveur refait les contrôles du navigateur)
+    message = verifier_dates(debut, fin)
+    if message:
+        return erreur(400, message)
+
+    # 2. Géométrie de la parcelle, lue dans SpatiaLite
+    conn = get_connection()
+    try:
+        ligne = conn.execute(
+            "SELECT AsGeoJSON(geom) AS geometrie FROM parcelles WHERE num_parcelle = ?",
+            (num,),
+        ).fetchone()
+    finally:
+        conn.close()
+    if ligne is None:
+        return erreur(404, f"Parcelle « {num} » introuvable.")
+
+    # 3. Calcul sur Google Earth Engine
+    try:
+        resultat = calculer_ndvi(json.loads(ligne["geometrie"]), debut, fin)
+    except AucuneImageError as e:
+        return erreur(422, str(e))                      # exigé par le guide
+    except RuntimeError as e:
+        return erreur(500, f"Configuration GEE manquante : {e}")
+    except ee.EEException as e:
+        return erreur(502, f"Erreur de Google Earth Engine : {e}")
+
+    # 4. Réponse JSON au format imposé
+    return jsonify({
+        "num_parcelle": num,
+        "debut": debut,
+        "fin": fin,
+        "ndvi_moyen": resultat["ndvi_moyen"],
+        "nb_images": resultat["nb_images"],
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
