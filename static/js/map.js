@@ -23,6 +23,12 @@ const fondTerrain = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.pn
 //     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
 //     { maxZoom: 19, attribution: "Tuiles &copy; Esri" });
 
+// Terrain : Esri World Topo Map (section 3 du guide). Ordre {z}/{y}/{x}.
+const fondTerrainEsri = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+    maxZoom: 19,
+    attribution: "Tuiles &copy; Esri — Source : Esri et la communauté des utilisateurs SIG"
+});
 // Satellite : Esri World Imagery.
 // Attention : les services ArcGIS utilisent l'ordre {z}/{y}/{x}, et non {z}/{x}/{y}.
 const fondSatellite = L.tileLayer(
@@ -49,7 +55,7 @@ const map = L.map("map", {
 // Les fonds sont des "baseLayers" : un seul visible à la fois (boutons radio).
 // La couche parcelles y sera ajoutée en F2 comme "overlay" (case à cocher).
 const controleCouches = L.control.layers(
-    { "Terrain": fondTerrain, "Satellite": fondSatellite },
+    { "Terrain (OpenTopoMap)": fondTerrain, "Terrain (Esri)": fondTerrainEsri, "Satellite": fondSatellite },
     {},
     { collapsed: false }   // contrôle toujours ouvert
 ).addTo(map);
