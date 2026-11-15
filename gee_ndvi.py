@@ -7,17 +7,23 @@ Traitement imposé par le guide :
   3. masque SCL : on ne garde que les classes 4 (végétation) et 5 (sol nu)
   4. NDVI = normalizedDifference(['B8', 'B4'])
   5. moyenne temporelle, puis moyenne spatiale (reduceRegion, pixels de 10 m)
+Option prévue par le guide : carte détaillée du NDVI sur la parcelle (carte_ndvi_png).
 
 L'identifiant du projet Google Cloud est lu dans la variable d'environnement
 GEE_PROJECT : il n'apparaît jamais dans le code (règle de sécurité du guide).
 """
 import os
+import urllib.request
 
 import ee
 
 COLLECTION = "COPERNICUS/S2_SR_HARMONIZED"   # Sentinel-2 niveau 2A (réflectance de surface)
 SEUIL_NUAGES = 30                            # % maximal de pixels nuageux par scène
 ECHELLE = 10                                 # résolution des bandes B4 et B8, en mètres
+
+# Couleurs de la carte NDVI, une par classe de la grille d'interprétation du guide :
+# < 0,2 sol nu ; 0,2–0,4 faible ; 0,4–0,6 modérée ; > 0,6 dense
+PALETTE_CLASSES = ["a6611a", "dfc27d", "a6d96a", "1a9641"]
 
 _gee_initialise = False   # la connexion à GEE n'est faite qu'une fois par processus
 
@@ -52,13 +58,10 @@ def ndvi_image(image):
     return image.normalizedDifference(["B8", "B4"]).rename("NDVI")
 
 
-def calculer_ndvi(geometrie_geojson, debut, fin):
-    """NDVI moyen d'une parcelle entre deux dates ('AAAA-MM-JJ').
-    Renvoie {"ndvi_moyen": ..., "nb_images": ...}.
-    Lève AucuneImageError s'il n'y a aucune image ou aucun pixel exploitable."""
-    initialiser_gee()
-
-    parcelle = ee.Geometry(geometrie_geojson)   # GeoJSON lu dans SpatiaLite
+def preparer_ndvi(parcelle, debut, fin):
+    """Étapes 1 à 5 (partie temporelle), communes au NDVI moyen et à la carte.
+    Renvoie (nombre d'images, image du NDVI moyen dans le temps).
+    Lève AucuneImageError s'il n'y a aucune image sur la période."""
     # filterDate exclut la date de fin : on avance d'un jour pour l'inclure
     fin_incluse = ee.Date(fin).advance(1, "day")
 
@@ -76,6 +79,16 @@ def calculer_ndvi(geometrie_geojson, debut, fin):
 
     # Étapes 3, 4, 5 : masque SCL, NDVI de chaque image, moyenne temporelle pixel par pixel
     ndvi_temporel = collection.map(masquer_scl).map(ndvi_image).mean()
+    return nb_images, ndvi_temporel
+
+
+def calculer_ndvi(geometrie_geojson, debut, fin):
+    """NDVI moyen d'une parcelle entre deux dates ('AAAA-MM-JJ').
+    Renvoie {"ndvi_moyen": ..., "nb_images": ...}.
+    Lève AucuneImageError s'il n'y a aucune image ou aucun pixel exploitable."""
+    initialiser_gee()
+    parcelle = ee.Geometry(geometrie_geojson)   # GeoJSON lu dans SpatiaLite
+    nb_images, ndvi_temporel = preparer_ndvi(parcelle, debut, fin)
 
     # Étape 5 (suite) : moyenne spatiale sur la parcelle, pixels de 10 m
     resultat = ndvi_temporel.reduceRegion(ee.Reducer.mean(), parcelle, ECHELLE).getInfo()
@@ -86,6 +99,35 @@ def calculer_ndvi(geometrie_geojson, debut, fin):
                                "(nuages ou ombres à chaque passage).")
 
     return {"ndvi_moyen": ndvi_moyen, "nb_images": nb_images}
+
+
+def carte_ndvi_png(geometrie_geojson, debut, fin):
+    """Option du guide : carte détaillée du NDVI sur la parcelle, en image PNG.
+    Chaque pixel de 10 m prend la couleur de sa classe d'interprétation ;
+    hors de la parcelle et sur les pixels masqués (SCL), l'image est transparente.
+    Renvoie les octets de l'image."""
+    initialiser_gee()
+    parcelle = ee.Geometry(geometrie_geojson)
+    _, ndvi_temporel = preparer_ndvi(parcelle, debut, fin)
+
+    # Classe de chaque pixel : chaque comparaison vaut 0 ou 1, leur somme donne
+    # 0 (< 0,2), 1 (0,2–0,4), 2 (0,4–0,6) ou 3 (> 0,6)
+    classes = ndvi_temporel.gte(0.2).add(ndvi_temporel.gte(0.4)).add(ndvi_temporel.gt(0.6))
+
+    # GEE fabrique l'image et renvoie son adresse, qui n'est connue que du serveur Flask
+    url = classes.clip(parcelle).getThumbURL({
+        "region": parcelle,
+        "dimensions": 512,          # 512 pixels sur le plus grand côté
+        "crs": "EPSG:3857",         # même projection que Leaflet
+        "format": "png",
+        "min": 0,
+        "max": 3,
+        "palette": PALETTE_CLASSES,
+    })
+    # Flask télécharge l'image lui-même : l'adresse Google (qui contient l'identifiant
+    # du projet) n'est jamais transmise au navigateur
+    with urllib.request.urlopen(url, timeout=60) as reponse:
+        return reponse.read()
 
 
 # Test en ligne de commande : python gee_ndvi.py <numéro de parcelle> <début> <fin>

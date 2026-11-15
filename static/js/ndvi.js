@@ -1,6 +1,7 @@
 /*
  * ndvi.js — F6 (interface) : mode sélection, surbrillance de la parcelle choisie,
- * fenêtre flottante déplaçable contenant l'iframe /ndvi?num=<numéro>.
+ * fenêtre flottante déplaçable contenant l'iframe /ndvi?num=<numéro>,
+ * et carte détaillée du NDVI sur la parcelle (option prévue par le guide).
  * Utilise map (map.js), coucheParcelles, contenuPopup et annulerDessin (parcelles.js).
  */
 
@@ -74,6 +75,7 @@ map.on("pm:drawstart", function () {
 coucheParcelles.on("click", function (e) {
     if (!modeSelection) return;   // hors mode sélection : la popup de F2 s'ouvre normalement
     const parcelle = e.layer;     // la parcelle cliquée
+    retirerCarteNdvi();           // la carte NDVI de la parcelle précédente disparaît
     quitterModeSelection();
     mettreEnSurbrillance(parcelle);
     ouvrirFenetreNdvi(parcelle.feature.properties.num_parcelle);
@@ -110,6 +112,7 @@ function ouvrirFenetreNdvi(num) {
 function fermerFenetreNdvi() {
     fenetreNdvi.hidden = true;
     iframeNdvi.src = "about:blank";   // vide l'iframe (arrête un éventuel chargement)
+    retirerCarteNdvi();
     retirerSurbrillance();
 }
 
@@ -141,3 +144,57 @@ function finDeplacement() {
 }
 enteteNdvi.addEventListener("pointerup", finDeplacement);
 enteteNdvi.addEventListener("pointercancel", finDeplacement);
+
+// ---------- 5. Carte NDVI de la parcelle (option prévue par le guide) ----------
+// Mêmes classes et mêmes couleurs que PALETTE_CLASSES dans gee_ndvi.py
+const CLASSES_NDVI = [
+    { couleur: "#a6611a", texte: "< 0,2 : sol nu ou végétation très faible" },
+    { couleur: "#dfc27d", texte: "0,2 – 0,4 : végétation faible" },
+    { couleur: "#a6d96a", texte: "0,4 – 0,6 : végétation modérée" },
+    { couleur: "#1a9641", texte: "> 0,6 : végétation dense" }
+];
+
+let carteNdvi = null;   // image actuellement posée sur la carte
+
+const controleLegendeNdvi = L.control({ position: "bottomright" });
+controleLegendeNdvi.onAdd = function () {
+    const div = L.DomUtil.create("div", "legende-wms");   // même cadre que la légende MapServer
+    let html = '<div class="panneau-titre">NDVI moyen</div>';
+    CLASSES_NDVI.forEach(function (c) {
+        html += '<div><span class="pastille" style="background:' + c.couleur + '"></span>' + c.texte + "</div>";
+    });
+    div.innerHTML = html;
+    return div;
+};
+
+// Déclarée avec « function » (et non const) : elle devient une propriété de window,
+// ce qui permet à l'iframe de l'appeler avec window.parent.afficherCarteNdvi(...)
+function afficherCarteNdvi(num, debut, fin) {
+    retirerCarteNdvi();
+    if (!parcelleSelectionnee) return;
+
+    const url = "/api/ndvi/carte?" + new URLSearchParams({ num: num, debut: debut, fin: fin });
+    const emprise = parcelleSelectionnee.getBounds();
+
+    // L'image (calculée par GEE) est posée exactement sur l'emprise de la parcelle
+    carteNdvi = L.imageOverlay(url, emprise, {
+        opacity: 0.9,
+        interactive: false,
+        className: "carte-ndvi"   // pixels nets, sans lissage (voir style.css)
+    }).addTo(map);
+    carteNdvi.on("error", function () {
+        alert("La carte NDVI n'a pas pu être produite pour cette période.");
+        retirerCarteNdvi();
+    });
+
+    controleLegendeNdvi.addTo(map);
+    map.fitBounds(emprise, { maxZoom: 18 });   // zoomer sur la parcelle
+}
+
+function retirerCarteNdvi() {
+    if (carteNdvi) {
+        map.removeLayer(carteNdvi);
+        carteNdvi = null;
+    }
+    controleLegendeNdvi.remove();   // sans effet si la légende n'est pas affichée
+}
