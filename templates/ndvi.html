@@ -20,6 +20,7 @@
         @keyframes tourner { to { transform: rotate(360deg); } }
         #resultat { margin-top: 12px; padding: 8px 10px; background: #f3f7f3; border-radius: 4px; line-height: 1.7; }
         .valeur { font-size: 20px; font-weight: bold; }
+        #bouton-carte-ndvi { margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -46,6 +47,8 @@
         <div>Images utilisées : <span id="res-images"></span></div>
         <div>Interprétation : <b id="res-interpretation"></b></div>
         <div id="res-periode"></div>
+        <!-- Option prévue par le guide : carte détaillée du NDVI sur la parcelle -->
+        <button type="button" id="bouton-carte-ndvi">Afficher la carte NDVI sur la parcelle</button>
     </div>
 
     <script>
@@ -60,6 +63,10 @@
         const message = document.getElementById("message");
         const chargement = document.getElementById("chargement");
         const resultat = document.getElementById("resultat");
+
+        // Période du dernier calcul réussi, réutilisée pour la carte NDVI
+        let dernierDebut = "";
+        let dernierFin = "";
 
         // Une date au format AAAA-MM-JJ (celui des champs de type date)
         function dateISO(d) {
@@ -137,6 +144,8 @@
                 document.getElementById("res-interpretation").textContent = interpreter(donnees.ndvi_moyen);
                 document.getElementById("res-periode").textContent =
                     "Période : du " + dateFr(donnees.debut) + " au " + dateFr(donnees.fin);
+                dernierDebut = donnees.debut;
+                dernierFin = donnees.fin;
                 resultat.hidden = false;
             } catch (err) {
                 message.textContent = "Erreur de communication avec le serveur : " + err.message;
@@ -144,6 +153,18 @@
                 bouton.disabled = false;
                 chargement.hidden = true;
             }
+        });
+
+        // Carte NDVI : affichée sur la carte principale, dans la page qui contient l'iframe.
+        // Les deux pages viennent du même serveur (même origine) : l'iframe a le droit
+        // d'appeler une fonction de la page principale, définie dans ndvi.js.
+        document.getElementById("bouton-carte-ndvi").addEventListener("click", function () {
+            if (typeof window.parent.afficherCarteNdvi !== "function") {
+                message.textContent = "Ouvrez ce formulaire depuis la carte pour afficher la carte NDVI.";
+                return;
+            }
+            window.parent.afficherCarteNdvi(
+                document.getElementById("champ-num").value, dernierDebut, dernierFin);
         });
     </script>
 </body>

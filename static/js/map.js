@@ -1,6 +1,8 @@
 /*
  * map.js — F1 : carte plein écran, fonds Terrain et Satellite,
  * échelle graphique, coordonnées du curseur.
+ * F3 : navigation, boutons « Vue Maroc » et « Vue région ».
+ * F4 : positionnement par coordonnées WGS84.
  * Chargé en premier : les autres scripts utilisent les variables définies ici.
  */
 
@@ -18,17 +20,15 @@ const fondTerrain = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.pn
     attribution: 'Données : &copy; <a href="https://www.openstreetmap.org/copyright">contributeurs OpenStreetMap</a>, SRTM | Style : &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
 });
 
-// Variante si le professeur confirme le fond Terrain ESRI (section 3 du guide) :
-// const fondTerrain = L.tileLayer(
-//     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
-//     { maxZoom: 19, attribution: "Tuiles &copy; Esri" });
-
-// Terrain : Esri World Topo Map (section 3 du guide). Ordre {z}/{y}/{x}.
+// Terrain (variante) : Esri World Topo Map, sans clé API. Ordre {z}/{y}/{x}.
+// Le guide indique un fond Terrain ESRI en section 3, mais OpenTopoMap en F1 :
+// les deux sont proposés dans le contrôle de couches.
 const fondTerrainEsri = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
     maxZoom: 19,
     attribution: "Tuiles &copy; Esri — Source : Esri et la communauté des utilisateurs SIG"
 });
+
 // Satellite : Esri World Imagery.
 // Attention : les services ArcGIS utilisent l'ordre {z}/{y}/{x}, et non {z}/{x}/{y}.
 const fondSatellite = L.tileLayer(
@@ -109,6 +109,54 @@ controleVueMaroc.onAdd = function () {
 
 controleVueMaroc.addTo(map);
 
+// ---------- Bouton « Vue région » : Basse Moulouya (zone Z8 du groupe 5) ----------
+// Emprise APPROXIMATIVE de la région agricole de la Basse Moulouya
+// (plaines des Triffa, de Zebra, de Bou Areg et de Garet), en degrés WGS84.
+// Rectangle à ajuster si le professeur précise d'autres limites.
+const EMPRISE_REGION = L.latLngBounds(
+    [34.75, -3.10],   // coin sud-ouest [latitude, longitude]
+    [35.18, -2.18]    // coin nord-est
+);
+
+// Contour de la région, affichable depuis le contrôle de couches
+const coucheRegion = L.rectangle(EMPRISE_REGION, {
+    color: "#ff4081",
+    weight: 2,
+    dashArray: "6 6",       // pointillés
+    fill: false,
+    interactive: false      // ne bloque pas les clics sur les parcelles (F2, F6)
+});
+controleCouches.addOverlay(coucheRegion, "Région Basse Moulouya");
+
+// Rayon de 10 km autour du point de départ de la zone Z8 (annexe A du guide) :
+// les 15 parcelles du projet doivent se trouver dans ce cercle
+const coucheRayon10km = L.circle([34.92, -2.32], {
+    radius: 10000,          // en mètres
+    color: "#00bcd4",
+    weight: 2,
+    dashArray: "4 4",
+    fill: false,
+    interactive: false
+});
+controleCouches.addOverlay(coucheRayon10km, "Zone Z8 : rayon de 10 km");
+
+// Le bouton, placé sous « Vue Maroc »
+const controleVueRegion = L.control({ position: "topleft" });
+controleVueRegion.onAdd = function () {
+    const bouton = L.DomUtil.create("button", "bouton-carte");
+    bouton.type = "button";
+    bouton.textContent = "Vue région";
+    bouton.title = "Basse Moulouya (Berkane, Nador, Saïdia)";
+
+    L.DomEvent.disableClickPropagation(bouton);
+    L.DomEvent.on(bouton, "click", function () {
+        map.fitBounds(EMPRISE_REGION);   // cadrer toute la région à l'écran
+        coucheRegion.addTo(map);         // et afficher son contour
+    });
+    return bouton;
+};
+controleVueRegion.addTo(map);
+
 // ---------- F4 : positionnement par coordonnées WGS84 ----------
 
 // Emprise du Maroc imposée par le guide (degrés décimaux, EPSG:4326)
@@ -141,10 +189,16 @@ controlePosition.onAdd = function () {
 };
 controlePosition.addTo(map);
 
-// Convertit le texte saisi en nombre. Accepte la virgule (-5,93) comme le point (-5.93).
+// Convertit le texte saisi en nombre. Tolère les saisies copiées-collées :
+// espaces et caractères invisibles retirés, virgule acceptée (-5,93),
+// signe moins typographique « − » accepté comme le tiret « - ».
 // Renvoie NaN ("Not a Number") si le texte n'est pas un nombre.
+// Utilisée aussi par le formulaire de F5 (production).
 function lireNombre(texte) {
-    const t = texte.trim().replace(",", ".");
+    const t = texte
+        .replace(/[\s​-‍⁠﻿]/g, "")   // espaces et caractères invisibles
+        .replace(",", ".")
+        .replace("−", "-");                         // signe moins typographique -> tiret
     if (t === "") return NaN;
     return Number(t);
 }
@@ -185,11 +239,13 @@ document.getElementById("form-position").addEventListener("submit", function (e)
     // Leaflet attend [latitude, longitude], c'est-à-dire [Y, X]
     const point = [y, x];
 
-    // 2. Basculer sur le fond Satellite
+    // 2. Basculer sur le fond Satellite, en retirant le fond Terrain affiché (l'un ou l'autre)
     fondSatellite.addTo(map);
-    if (map.hasLayer(fondTerrain)) {
-        map.removeLayer(fondTerrain);
-    }
+    [fondTerrain, fondTerrainEsri].forEach(function (fond) {
+        if (map.hasLayer(fond)) {
+            map.removeLayer(fond);
+        }
+    });
 
     // 3. Centrer la carte sur le point, au zoom 17
     map.setView(point, ZOOM_ALLER);

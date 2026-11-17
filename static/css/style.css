@@ -182,3 +182,18 @@ html, body {
 .legende-wms img {
     display: block;
 }
+
+/* F6 (option) : carte NDVI affichée sans lissage, chaque pixel de 10 m reste net */
+.carte-ndvi {
+    image-rendering: pixelated;
+}
+
+/* F6 (option) : pastilles de couleur de la légende NDVI */
+.pastille {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid #555;
+}
