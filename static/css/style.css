@@ -183,6 +183,15 @@ html, body {
     display: block;
 }
 
+/* Légende des contours : petit trait en pointillés (couleur donnée dans le HTML) */
+.trait-legende {
+    display: inline-block;
+    width: 26px;
+    margin-right: 6px;
+    vertical-align: middle;
+    border-top: 2px dashed;
+}
+
 /* F6 (option) : carte NDVI affichée sans lissage, chaque pixel de 10 m reste net */
 .carte-ndvi {
     image-rendering: pixelated;

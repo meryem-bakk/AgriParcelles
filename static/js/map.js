@@ -109,24 +109,35 @@ controleVueMaroc.onAdd = function () {
 
 controleVueMaroc.addTo(map);
 
-// ---------- Bouton « Vue région » : Basse Moulouya (zone Z8 du groupe 5) ----------
-// Emprise APPROXIMATIVE de la région agricole de la Basse Moulouya
-// (plaines des Triffa, de Zebra, de Bou Areg et de Garet), en degrés WGS84.
-// Rectangle à ajuster si le professeur précise d'autres limites.
-const EMPRISE_REGION = L.latLngBounds(
-    [34.75, -3.10],   // coin sud-ouest [latitude, longitude]
-    [35.18, -2.18]    // coin nord-est
-);
-
-// Contour de la région, affichable depuis le contrôle de couches
-const coucheRegion = L.rectangle(EMPRISE_REGION, {
-    color: "#ff4081",
-    weight: 2,
-    dashArray: "6 6",       // pointillés
-    fill: false,
+// ---------- Bouton « Vue région » : la région de l’Oriental (zone Z8 du groupe 5) ----------
+// Limite administrative de la région de l’Oriental (découpage en 12 régions), tirée de
+// DA_REGIONS_12R.shp, simplifiée (environ 100 m) et convertie en GeoJSON WGS84.
+// La Basse Moulouya (plaines des Triffa, de Zebra, de Bou Areg et de Garet) est à l’intérieur.
+const coucheRegion = L.geoJSON(null, {
+    style: {
+        color: "#ff4081",
+        weight: 2,
+        dashArray: "6 6",   // pointillés
+        fill: false
+    },
     interactive: false      // ne bloque pas les clics sur les parcelles (F2, F6)
 });
-controleCouches.addOverlay(coucheRegion, "Région Basse Moulouya");
+controleCouches.addOverlay(coucheRegion, "Région de l’Oriental");
+
+// Chargement du contour, une seule fois, au démarrage de la page
+fetch("/static/data/region_oriental.geojson")
+    .then(function (reponse) {
+        if (!reponse.ok) {
+            throw new Error("erreur " + reponse.status);
+        }
+        return reponse.json();
+    })
+    .then(function (geojson) {
+        coucheRegion.addData(geojson);
+    })
+    .catch(function (erreur) {
+        console.error("Contour de la région introuvable :", erreur);
+    });
 
 // Rayon de 10 km autour du point de départ de la zone Z8 (annexe A du guide) :
 // les 15 parcelles du projet doivent se trouver dans ce cercle
@@ -140,6 +151,35 @@ const coucheRayon10km = L.circle([34.92, -2.32], {
 });
 controleCouches.addOverlay(coucheRayon10km, "Zone Z8 : rayon de 10 km");
 
+// Légende des deux contours : un trait en pointillés de leur couleur.
+// Une ligne n'apparaît que si son contour est affiché ; sans contour, pas de légende.
+const controleLegendeContours = L.control({ position: "bottomright" });
+controleLegendeContours.onAdd = function () {
+    const div = L.DomUtil.create("div", "legende-wms");   // même cadre que les autres légendes
+    div.innerHTML =
+        '<div class="panneau-titre">Contours</div>' +
+        '<div id="legende-region"><span class="trait-legende" style="border-color:#ff4081"></span>Région de l’Oriental</div>' +
+        '<div id="legende-rayon"><span class="trait-legende" style="border-color:#00bcd4"></span>Zone Z8 : rayon de 10 km</div>';
+    return div;
+};
+controleLegendeContours.addTo(map);
+
+function majLegendeContours() {
+    const region = map.hasLayer(coucheRegion);
+    const rayon = map.hasLayer(coucheRayon10km);
+    document.getElementById("legende-region").hidden = !region;
+    document.getElementById("legende-rayon").hidden = !rayon;
+    controleLegendeContours.getContainer().hidden = !(region || rayon);
+}
+
+// Mise à jour quand un contour est coché, décoché ou affiché par « Vue région »
+map.on("layeradd layerremove", function (e) {
+    if (e.layer === coucheRegion || e.layer === coucheRayon10km) {
+        majLegendeContours();
+    }
+});
+majLegendeContours();
+
 // Le bouton, placé sous « Vue Maroc »
 const controleVueRegion = L.control({ position: "topleft" });
 controleVueRegion.onAdd = function () {
@@ -150,8 +190,10 @@ controleVueRegion.onAdd = function () {
 
     L.DomEvent.disableClickPropagation(bouton);
     L.DomEvent.on(bouton, "click", function () {
-        map.fitBounds(EMPRISE_REGION);   // cadrer toute la région à l'écran
-        coucheRegion.addTo(map);         // et afficher son contour
+        if (coucheRegion.getLayers().length > 0) {
+            map.fitBounds(coucheRegion.getBounds());   // cadrer toute la région à l'écran
+        }
+        coucheRegion.addTo(map);                       // et afficher son contour
     });
     return bouton;
 };
