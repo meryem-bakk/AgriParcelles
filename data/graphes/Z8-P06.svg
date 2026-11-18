@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="270" viewBox="0 0 480 270" font-family="Arial, sans-serif">
+<rect width="480" height="270" fill="white"/>
+<text x="42" y="20" font-size="15" font-weight="bold">Z8-P06 : Blé dur</text>
+<text x="42" y="38" font-size="12" fill="#6B7280">NDVI : Jachère / sol nu (accord : )</text>
+<line x1="42" y1="203.6" x2="466" y2="203.6" stroke="#E5E7EB"/>
+<text x="36" y="207.6" font-size="11" fill="#6B7280" text-anchor="end">0.2</text>
+<line x1="42" y1="165.2" x2="466" y2="165.2" stroke="#E5E7EB"/>
+<text x="36" y="169.2" font-size="11" fill="#6B7280" text-anchor="end">0.4</text>
+<line x1="42" y1="126.8" x2="466" y2="126.8" stroke="#E5E7EB"/>
+<text x="36" y="130.8" font-size="11" fill="#6B7280" text-anchor="end">0.6</text>
+<line x1="42" y1="88.4" x2="466" y2="88.4" stroke="#E5E7EB"/>
+<text x="36" y="92.4" font-size="11" fill="#6B7280" text-anchor="end">0.8</text>
+<text x="58.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">S</text>
+<text x="93.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">O</text>
+<text x="129.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">N</text>
+<text x="164.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">D</text>
+<text x="200.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="236.5" y="262" font-size="11" fill="#6B7280" text-anchor="middle">F</text>
+<text x="269.1" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="305.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<text x="340.2" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="376.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="411.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="447.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<line x1="42" y1="242.0" x2="466" y2="242.0" stroke="#6B7280"/>
+<polyline points="44.3,241.6 53.6,239.3 56.0,230.7 59.5,227.4 71.1,225.7 79.3,199.6 88.6,211.4 100.2,212.1 102.6,210.6 111.9,205.8 114.2,206.8 125.9,204.5 129.4,211.6 137.5,207.9 149.2,207.9 160.8,211.7 164.3,206.9 195.8,214.3 240.0,202.8 245.8,198.0 265.6,197.8 280.8,199.9 288.9,201.3 298.3,195.2 309.9,191.9 323.9,192.6 335.5,191.0 344.9,185.6 347.2,188.1 350.7,186.0 356.5,181.6 358.8,185.4 362.3,182.2 370.5,193.1 374.0,206.7 379.8,195.1 382.1,207.1 385.6,215.4 391.5,226.4 393.8,238.2 397.3,239.9 403.1,235.1 405.4,235.9 408.9,239.9 414.7,237.6 417.1,237.5 420.6,229.1 428.7,235.7 432.2,230.2 438.0,233.5 443.9,225.5 449.7,233.2 452.0,236.8 455.5,232.1 463.7,232.0" fill="none" stroke="#2E6B3F" stroke-width="2"/>
+<circle cx="44.3" cy="241.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="53.6" cy="239.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="56.0" cy="230.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="59.5" cy="227.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="71.1" cy="225.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="79.3" cy="199.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="88.6" cy="211.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="100.2" cy="212.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="102.6" cy="210.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="111.9" cy="205.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="114.2" cy="206.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="125.9" cy="204.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="129.4" cy="211.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="137.5" cy="207.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="149.2" cy="207.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="160.8" cy="211.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="164.3" cy="206.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="195.8" cy="214.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="240.0" cy="202.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="245.8" cy="198.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="265.6" cy="197.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="280.8" cy="199.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="288.9" cy="201.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="298.3" cy="195.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="309.9" cy="191.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="323.9" cy="192.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="335.5" cy="191.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="344.9" cy="185.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="347.2" cy="188.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="350.7" cy="186.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="356.5" cy="181.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="358.8" cy="185.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="362.3" cy="182.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="370.5" cy="193.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="374.0" cy="206.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="379.8" cy="195.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="382.1" cy="207.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="385.6" cy="215.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="391.5" cy="226.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="393.8" cy="238.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="397.3" cy="239.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="403.1" cy="235.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="405.4" cy="235.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="408.9" cy="239.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="414.7" cy="237.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="417.1" cy="237.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="420.6" cy="229.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="428.7" cy="235.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="432.2" cy="230.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="438.0" cy="233.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="443.9" cy="225.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="449.7" cy="233.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="452.0" cy="236.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="455.5" cy="232.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="463.7" cy="232.0" r="2.2" fill="#2E6B3F"/>
+</svg>

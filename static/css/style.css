@@ -132,7 +132,7 @@ html, body {
 .fenetre-flottante {
     position: absolute;
     z-index: 1100;                 /* au-dessus de la carte et de ses contrôles */
-    width: 360px;
+    width: 440px;                  /* élargie pour le graphe du cycle NDVI */
     background: #fff;
     border: 2px solid rgba(0, 0, 0, 0.2);
     border-radius: 6px;
@@ -167,7 +167,7 @@ html, body {
 .fenetre-flottante iframe {
     display: block;
     width: 100%;
-    height: 400px;
+    height: 520px;                 /* idem */
     border: none;
 }
 

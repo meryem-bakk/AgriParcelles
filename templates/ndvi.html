@@ -21,6 +21,8 @@
         #resultat { margin-top: 12px; padding: 8px 10px; background: #f3f7f3; border-radius: 4px; line-height: 1.7; }
         .valeur { font-size: 20px; font-weight: bold; }
         #bouton-carte-ndvi { margin-top: 8px; }
+        #lien-cycle { margin-top: 16px; padding-top: 10px; border-top: 1px solid #ddd; }
+        #lien-cycle a { color: #2e7d32; }
     </style>
 </head>
 <body>
@@ -50,6 +52,9 @@
         <!-- Option prévue par le guide : carte détaillée du NDVI sur la parcelle -->
         <button type="button" id="bouton-carte-ndvi">Afficher la carte NDVI sur la parcelle</button>
     </div>
+
+    <!-- Extension : courbe de la campagne comparée aux profils de référence (templates/cycle.html) -->
+    <p id="lien-cycle"><a href="/ndvi/cycle?num={{ num | urlencode }}">Voir le cycle de la campagne 2025-2026 et le comparer aux profils de référence →</a></p>
 
     <script>
         // Règles de dates imposées par le guide

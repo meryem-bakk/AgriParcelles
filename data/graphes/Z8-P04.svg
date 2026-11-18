@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="270" viewBox="0 0 480 270" font-family="Arial, sans-serif">
+<rect width="480" height="270" fill="white"/>
+<text x="42" y="20" font-size="15" font-weight="bold">Z8-P04 : Blé dur</text>
+<text x="42" y="38" font-size="12" fill="#6B7280">NDVI : Culture d&#x27;hiver (céréale, betterave) (accord : )</text>
+<line x1="42" y1="203.6" x2="466" y2="203.6" stroke="#E5E7EB"/>
+<text x="36" y="207.6" font-size="11" fill="#6B7280" text-anchor="end">0.2</text>
+<line x1="42" y1="165.2" x2="466" y2="165.2" stroke="#E5E7EB"/>
+<text x="36" y="169.2" font-size="11" fill="#6B7280" text-anchor="end">0.4</text>
+<line x1="42" y1="126.8" x2="466" y2="126.8" stroke="#E5E7EB"/>
+<text x="36" y="130.8" font-size="11" fill="#6B7280" text-anchor="end">0.6</text>
+<line x1="42" y1="88.4" x2="466" y2="88.4" stroke="#E5E7EB"/>
+<text x="36" y="92.4" font-size="11" fill="#6B7280" text-anchor="end">0.8</text>
+<text x="58.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">S</text>
+<text x="93.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">O</text>
+<text x="129.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">N</text>
+<text x="164.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">D</text>
+<text x="200.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="236.5" y="262" font-size="11" fill="#6B7280" text-anchor="middle">F</text>
+<text x="269.1" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="305.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<text x="340.2" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="376.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="411.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="447.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<line x1="42" y1="242.0" x2="466" y2="242.0" stroke="#6B7280"/>
+<polyline points="44.3,212.0 53.6,210.7 56.0,212.0 59.5,211.7 71.1,212.0 79.3,209.7 82.8,210.7 88.6,208.8 100.2,211.7 102.6,211.5 111.9,209.4 114.2,210.7 125.9,208.7 129.4,211.8 135.2,208.6 137.5,210.4 149.2,211.1 160.8,212.1 164.3,206.8 195.8,175.1 240.0,68.7 245.8,70.3 265.6,78.2 280.8,82.1 288.9,91.6 298.3,152.4 304.1,119.9 323.9,183.9 335.5,190.6 344.9,195.7 347.2,195.8 350.7,197.0 356.5,197.4 358.8,204.2 362.3,204.8 370.5,207.7 374.0,206.8 379.8,200.5 385.6,207.1 391.5,206.7 393.8,209.3 397.3,209.6 403.1,205.1 405.4,207.7 408.9,209.1 414.7,209.2 417.1,210.4 420.6,208.2 426.4,205.4 428.7,212.3 432.2,207.8 438.0,210.1 440.4,212.1 443.9,208.6 449.7,205.4 455.5,208.4 463.7,210.1" fill="none" stroke="#2E6B3F" stroke-width="2"/>
+<circle cx="44.3" cy="212.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="53.6" cy="210.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="56.0" cy="212.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="59.5" cy="211.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="71.1" cy="212.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="79.3" cy="209.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="82.8" cy="210.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="88.6" cy="208.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="100.2" cy="211.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="102.6" cy="211.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="111.9" cy="209.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="114.2" cy="210.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="125.9" cy="208.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="129.4" cy="211.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="135.2" cy="208.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="137.5" cy="210.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="149.2" cy="211.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="160.8" cy="212.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="164.3" cy="206.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="195.8" cy="175.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="240.0" cy="68.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="245.8" cy="70.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="265.6" cy="78.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="280.8" cy="82.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="288.9" cy="91.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="298.3" cy="152.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="304.1" cy="119.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="323.9" cy="183.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="335.5" cy="190.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="344.9" cy="195.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="347.2" cy="195.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="350.7" cy="197.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="356.5" cy="197.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="358.8" cy="204.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="362.3" cy="204.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="370.5" cy="207.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="374.0" cy="206.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="379.8" cy="200.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="385.6" cy="207.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="391.5" cy="206.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="393.8" cy="209.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="397.3" cy="209.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="403.1" cy="205.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="405.4" cy="207.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="408.9" cy="209.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="414.7" cy="209.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="417.1" cy="210.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="420.6" cy="208.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="426.4" cy="205.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="428.7" cy="212.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="432.2" cy="207.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="438.0" cy="210.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="440.4" cy="212.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="443.9" cy="208.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="449.7" cy="205.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="455.5" cy="208.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="463.7" cy="210.1" r="2.2" fill="#2E6B3F"/>
+</svg>

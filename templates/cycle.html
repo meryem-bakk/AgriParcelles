@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cycle NDVI — parcelle {{ num }}</title>
+    <link rel="icon" href="data:,">
+    <style>
+        body { font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; font-size: 13px; margin: 12px; color: #222; }
+        a { color: #2e7d32; }
+        h1 { font-size: 15px; margin: 8px 0; }
+        .erreur { color: #c0392b; margin-top: 8px; }
+        .erreur:empty { display: none; }
+        #chargement { margin-top: 10px; color: #555; }
+        .spinner { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: middle;
+                   border: 2px solid #ccc; border-top-color: #2e7d32; border-radius: 50%;
+                   animation: tourner 0.8s linear infinite; }
+        @keyframes tourner { to { transform: rotate(360deg); } }
+        #verdict { padding: 8px 10px; background: #f3f7f3; border-left: 4px solid #2e7d32; border-radius: 4px; line-height: 1.5; }
+        #verdict.attention { background: #fdf3e7; border-left-color: #e67e22; }
+        svg { display: block; width: 100%; height: auto; margin-top: 8px; }
+        .legende span { display: inline-block; margin-right: 12px; }
+        .trait { display: inline-block; width: 22px; margin-right: 4px; vertical-align: middle; border-top: 2px solid; }
+        label { display: block; margin-top: 8px; }
+        select { width: 100%; padding: 3px; margin-top: 2px; }
+        #cycle { color: #444; font-style: italic; margin: 6px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        th, td { text-align: left; padding: 3px 4px; border-bottom: 1px solid #e5e5e5; }
+        td.nombre { text-align: right; }
+        tbody tr { cursor: pointer; }
+        tbody tr:hover { background: #f5f5f5; }
+        tr.affiche { background: #fdf3e7; }
+        .note { color: #666; font-size: 11px; margin-top: 8px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <a id="lien-retour" href="#">← Calcul du NDVI sur une période</a>
+    <h1>Cycle NDVI de la campagne 2025-2026</h1>
+
+    <div id="chargement"><span class="spinner"></span>Chargement de la courbe… (jusqu'à une minute si elle doit être calculée sur Google Earth Engine)</div>
+    <div id="message" class="erreur"></div>
+
+    <div id="resultat" hidden>
+        <div id="verdict"></div>
+        <svg id="graphe" viewBox="0 0 400 220" role="img" aria-label="Courbe NDVI de la parcelle et profil de référence"></svg>
+        <div class="legende">
+            <span><span class="trait" style="border-color:#2e7d32"></span>Parcelle (lissée)</span>
+            <span><span class="trait" style="border-color:#e67e22; border-top-style:dashed"></span>Profil de référence</span>
+            <span style="color:#7cb342">● images Sentinel-2</span>
+        </div>
+        <label>Profil de référence affiché
+            <select id="choix-profil"></select>
+        </label>
+        <div id="cycle"></div>
+        <table>
+            <thead><tr><th>Profil de référence</th><th class="nombre">Écart</th><th>Correspondance</th></tr></thead>
+            <tbody id="tableau"></tbody>
+        </table>
+        <p class="note" id="note"></p>
+    </div>
+
+    <script>
+        const NUM = {{ num | tojson }};   // tojson : le numéro devient une chaîne JavaScript sûre
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        const LARGEUR = 400, HAUTEUR = 220;
+        const GAUCHE = 30, DROITE = 8, HAUT = 8, BAS = 22;   // marges autour du tracé
+        const MOIS = ["S", "O", "N", "D", "J", "F", "M", "A", "M", "J", "J", "A"];
+        const DEBUT = Date.parse("2025-09-01");
+        const DUREE = Date.parse("2026-08-31") - DEBUT;
+
+        let donnees = null;   // réponse de /api/ndvi/serie
+
+        document.getElementById("lien-retour").href = "/ndvi?num=" + encodeURIComponent(NUM);
+
+        // Position d'une date (AAAA-MM-JJ) et d'un NDVI sur le graphe
+        function x(dateIso) {
+            return GAUCHE + (Date.parse(dateIso) - DEBUT) / DUREE * (LARGEUR - GAUCHE - DROITE);
+        }
+        function y(ndvi) {
+            const v = Math.min(Math.max(ndvi, 0), 1);
+            return HAUTEUR - BAS - v * (HAUTEUR - HAUT - BAS);
+        }
+
+        // Crée un élément SVG avec ses attributs (jamais de HTML construit à partir des données)
+        function svg(tag, attributs, texte) {
+            const el = document.createElementNS(SVG_NS, tag);
+            for (const nom in attributs) el.setAttribute(nom, attributs[nom]);
+            if (texte !== undefined) el.textContent = texte;
+            return el;
+        }
+
+        function ligneBrisee(dates, valeurs, attributs) {
+            const points = dates.map((d, i) => x(d).toFixed(1) + "," + y(valeurs[i]).toFixed(1)).join(" ");
+            return svg("polyline", Object.assign({ points: points, fill: "none" }, attributs));
+        }
+
+        // Dessine le graphe : axes, images Sentinel-2, courbe lissée, profil choisi
+        function dessiner(nomProfil) {
+            const g = document.getElementById("graphe");
+            g.replaceChildren();
+
+            // Lignes horizontales aux seuils de la grille d'interprétation du guide
+            [0.2, 0.4, 0.6, 0.8].forEach(function (v) {
+                g.append(svg("line", { x1: GAUCHE, y1: y(v), x2: LARGEUR - DROITE, y2: y(v), stroke: "#e5e5e5" }));
+                g.append(svg("text", { x: GAUCHE - 4, y: y(v) + 3, "font-size": 9, fill: "#777", "text-anchor": "end" }, v.toFixed(1)));
+            });
+            g.append(svg("line", { x1: GAUCHE, y1: y(0), x2: LARGEUR - DROITE, y2: y(0), stroke: "#999" }));
+            // Initiale de chaque mois, placée au 15 du mois
+            MOIS.forEach(function (lettre, i) {
+                const annee = i < 4 ? 2025 : 2026;
+                const mois = String((i + 8) % 12 + 1).padStart(2, "0");
+                g.append(svg("text", { x: x(annee + "-" + mois + "-15"), y: HAUTEUR - 6, "font-size": 9,
+                                       fill: "#777", "text-anchor": "middle" }, lettre));
+            });
+
+            const profil = donnees.profils.find(p => p.nom === nomProfil);
+            g.append(ligneBrisee(donnees.grille, profil.valeurs,
+                                 { stroke: "#e67e22", "stroke-width": 2, "stroke-dasharray": "6 4" }));
+            donnees.dates.forEach(function (d, i) {
+                g.append(svg("circle", { cx: x(d), cy: y(donnees.ndvi[i]), r: 1.8, fill: "#7cb342" }));
+            });
+            g.append(ligneBrisee(donnees.grille, donnees.courbe, { stroke: "#2e7d32", "stroke-width": 2.2 }));
+
+            document.getElementById("cycle").textContent = profil.cycle;
+            document.getElementById("choix-profil").value = nomProfil;
+            document.querySelectorAll("#tableau tr").forEach(function (tr) {
+                tr.classList.toggle("affiche", tr.dataset.nom === nomProfil);
+            });
+        }
+
+        // Tableau et liste des profils, du plus proche au plus éloigné
+        function remplirProfils() {
+            const choix = document.getElementById("choix-profil");
+            const tableau = document.getElementById("tableau");
+            donnees.profils.forEach(function (p, i) {
+                const marque = (p.nom === donnees.profil_saisie) ? " (culture saisie)" : "";
+                choix.append(new Option(p.nom + marque, p.nom));
+
+                const tr = document.createElement("tr");
+                tr.dataset.nom = p.nom;
+                [p.nom + marque, p.ecart.toFixed(3).replace(".", ","), p.correspondance].forEach(function (texte, j) {
+                    const td = document.createElement("td");
+                    td.textContent = texte;
+                    if (j === 1) td.className = "nombre";
+                    if (i === 0) td.style.fontWeight = "bold";   // le profil le plus proche
+                    tr.append(td);
+                });
+                tr.addEventListener("click", () => dessiner(p.nom));
+                tableau.append(tr);
+            });
+            choix.addEventListener("change", () => dessiner(choix.value));
+        }
+
+        async function charger() {
+            const message = document.getElementById("message");
+            try {
+                const reponse = await fetch("/api/ndvi/serie?" + new URLSearchParams({ num: NUM }));
+                const resultat = await reponse.json();
+                if (!reponse.ok) {
+                    message.textContent = resultat.erreur;   // 404, 422, 500 ou 502 : message du serveur
+                    return;
+                }
+                donnees = resultat;
+
+                const verdict = document.getElementById("verdict");
+                verdict.textContent = "Parcelle " + donnees.num_parcelle + ", culture saisie : "
+                                      + donnees.culture + ". " + donnees.verdict;
+                const confirme = donnees.profils[0].nom === donnees.profil_saisie
+                                 && donnees.profils[0].correspondance === "bonne";
+                verdict.classList.toggle("attention", !confirme);
+
+                document.getElementById("note").textContent =
+                    donnees.dates.length + " images Sentinel-2 sans nuages ("
+                    + (donnees.source === "fichier" ? "data/series_ndvi.csv" : "calculées sur Google Earth Engine")
+                    + "). Profils de référence théoriques, construits à partir du calendrier cultural et de la "
+                    + "grille du guide. Écart : différence moyenne entre les deux courbes, en NDVI, sur une grille de 10 jours.";
+
+                remplirProfils();
+                document.getElementById("resultat").hidden = false;
+                // Au départ : le profil de la culture saisie, sinon le plus proche
+                dessiner(donnees.profil_saisie || donnees.profils[0].nom);
+            } catch (err) {
+                message.textContent = "Erreur de communication avec le serveur : " + err.message;
+            } finally {
+                document.getElementById("chargement").hidden = true;
+            }
+        }
+
+        charger();
+    </script>
+</body>
+</html>

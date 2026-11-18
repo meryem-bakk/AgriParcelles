@@ -10,7 +10,9 @@ import ee
 from flask import Flask, Response, jsonify, render_template, request
 
 from db import get_connection
-from gee_ndvi import AucuneImageError, calculer_ndvi, carte_ndvi_png
+from extraire_series import nettoyer, serie_gee
+from gee_ndvi import AucuneImageError, calculer_ndvi, carte_ndvi_png, initialiser_gee
+from profils_ndvi import GRILLE, MIN_DATES, comparer, lire_serie_fichier
 
 # Flask sert automatiquement le contenu du dossier static/ sous l'adresse /static/...
 app = Flask(__name__)
@@ -280,6 +282,66 @@ def api_ndvi_carte():
         return erreur(502, f"Erreur de Google Earth Engine : {e}")
 
     return Response(png, mimetype="image/png")
+
+
+@app.route("/ndvi/cycle")
+def page_cycle():
+    """Extension — Page chargée dans l'iframe de F6 : courbe NDVI de la campagne
+    2025-2026 comparée aux profils de référence des cultures."""
+    num = request.args.get("num", "").strip()
+    if not num:
+        return "Paramètre num manquant dans l'adresse.", 400
+    return render_template("cycle.html", num=num)
+
+
+@app.route("/api/ndvi/serie", methods=["GET"])
+def api_ndvi_serie():
+    """Extension — Série NDVI d'une parcelle sur la campagne 2025-2026, comparée aux
+    profils de référence (profils_ndvi.py). La série est lue dans data/series_ndvi.csv,
+    produit par extraire_series.py ; une parcelle absente du fichier (ajoutée depuis)
+    est calculée sur GEE, avec le même traitement."""
+    num = request.args.get("num", "").strip()
+
+    conn = get_connection()
+    try:
+        ligne = conn.execute(
+            "SELECT culture, AsGeoJSON(geom) AS geometrie FROM parcelles WHERE num_parcelle = ?",
+            (num,),
+        ).fetchone()
+    finally:
+        conn.close()
+    if ligne is None:
+        return erreur(404, f"Parcelle « {num} » introuvable.")
+
+    points = lire_serie_fichier(num)
+    source = "fichier"
+    if not points:
+        try:
+            initialiser_gee()
+            lignes = nettoyer(serie_gee(json.loads(ligne["geometrie"])))
+        except RuntimeError as e:
+            return erreur(500, f"Configuration GEE manquante : {e}")
+        except ee.EEException as e:
+            return erreur(502, f"Erreur de Google Earth Engine : {e}")
+        points = [(date.fromisoformat(jour), ndvi) for jour, ndvi, _ in lignes if ndvi != ""]
+        source = "gee"
+
+    if len(points) < MIN_DATES:
+        return erreur(422, "Trop peu d'images sans nuages sur la campagne pour tracer la courbe.")
+
+    resultat = comparer(points, ligne["culture"])
+    return jsonify({
+        "num_parcelle": num,
+        "culture": ligne["culture"],
+        "source": source,
+        "dates": [d.isoformat() for d, _ in points],
+        "ndvi": [round(v, 3) for _, v in points],
+        "grille": [d.isoformat() for d in GRILLE],
+        "courbe": resultat["courbe"],
+        "profils": resultat["profils"],
+        "profil_saisie": resultat["profil_saisie"],
+        "verdict": resultat["verdict"],
+    })
 
 
 if __name__ == "__main__":
