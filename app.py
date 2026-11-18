@@ -3,6 +3,7 @@ app.py — Serveur Flask d'AgriParcelles : page principale et API REST en JSON.
 Lancement : python app.py, puis http://127.0.0.1:5000
 """
 import json
+import math
 import sqlite3
 from datetime import date
 
@@ -102,6 +103,28 @@ def geometrie_parcelle(num):
     finally:
         conn.close()
     return json.loads(ligne["geometrie"]) if ligne else None
+
+
+def verifier_attributs(donnees):
+    """Extension (modification d'une parcelle) : mêmes contrôles que F5 sur les attributs.
+    Renvoie (num, agriculteur, culture, production) et "", ou None et le message d'erreur."""
+    num = str(donnees.get("num_parcelle") or "").strip()
+    agriculteur = str(donnees.get("agriculteur") or "").strip()
+    culture = donnees.get("culture")
+    if not num:
+        return None, "Le numéro de parcelle est obligatoire."
+    if not agriculteur:
+        return None, "Le nom de l'agriculteur est obligatoire."
+    if culture not in CULTURES:
+        return None, "Culture inconnue."
+    try:
+        production = float(donnees.get("production_t"))
+    except (TypeError, ValueError):
+        return None, "La production doit être un nombre."
+    # isfinite refuse aussi NaN et l'infini, que le JSON de Python accepte
+    if not math.isfinite(production) or production < 0:
+        return None, "La production doit être un nombre positif ou nul."
+    return (num, agriculteur, culture, production), ""
 
 
 # ---------- Routes ----------
@@ -206,6 +229,62 @@ def creer_parcelle():
         conn.close()
 
     return jsonify(ligne_vers_feature(ligne)), 201
+
+
+@app.route("/api/parcelles/<int:id_parcelle>", methods=["PUT"])
+def modifier_parcelle(id_parcelle):
+    """Extension — Modifie les attributs d'une parcelle (numéro, agriculteur, culture,
+    production). La géométrie, donc la superficie, ne change pas."""
+    attributs, message = verifier_attributs(request.get_json(silent=True) or {})
+    if message:
+        return erreur(400, message)
+    num, agriculteur, culture, production = attributs
+
+    conn = get_connection()
+    try:
+        try:
+            modifiees = conn.execute(
+                """
+                UPDATE parcelles
+                SET num_parcelle = ?, agriculteur = ?, culture = ?, production_t = ?
+                WHERE id = ?
+                """,
+                (num, agriculteur, culture, production, id_parcelle),
+            ).rowcount
+            conn.commit()
+        except sqlite3.IntegrityError as e:
+            # Même contrainte UNIQUE qu'en F5 : numéro déjà pris par une autre parcelle
+            if "UNIQUE" in str(e):
+                return erreur(409, f"Le numéro de parcelle « {num} » existe déjà.")
+            return erreur(422, f"Modification refusée par la base : {e}")
+        if modifiees == 0:
+            return erreur(404, f"Parcelle n° {id_parcelle} introuvable.")
+
+        ligne = conn.execute(
+            "SELECT " + COLONNES + " FROM parcelles WHERE id = ?", (id_parcelle,)
+        ).fetchone()
+    finally:
+        conn.close()
+
+    return jsonify(ligne_vers_feature(ligne))
+
+
+@app.route("/api/parcelles/<int:id_parcelle>", methods=["DELETE"])
+def supprimer_parcelle(id_parcelle):
+    """Extension — Supprime une parcelle. L'index spatial est mis à jour
+    automatiquement par SpatiaLite."""
+    conn = get_connection()
+    try:
+        supprimees = conn.execute(
+            "DELETE FROM parcelles WHERE id = ?", (id_parcelle,)
+        ).rowcount
+        conn.commit()
+    finally:
+        conn.close()
+
+    if supprimees == 0:
+        return erreur(404, f"Parcelle n° {id_parcelle} introuvable.")
+    return jsonify({"supprimee": id_parcelle})
 
 
 @app.route("/ndvi")

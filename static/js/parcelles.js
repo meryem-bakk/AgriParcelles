@@ -27,7 +27,12 @@ function contenuPopup(p) {
         "Culture : " + echapper(p.culture) + "<br>" +
         "Superficie : " + p.superficie_ha.toFixed(2) + " ha<br>" +
         "Production : " + p.production_t + " t<br>" +
-        "Date de saisie : " + p.date_saisie;
+        "Date de saisie : " + p.date_saisie +
+        // Extension : modifier ou supprimer la parcelle
+        '<div class="boutons-popup">' +
+        '<button type="button" class="bouton-popup bouton-modifier">Modifier</button>' +
+        '<button type="button" class="bouton-popup bouton-supprimer">Supprimer</button>' +
+        "</div>";
 }
 
 // Couche GeoJSON, vide au départ, remplie par chargerParcelles()
@@ -36,6 +41,7 @@ const coucheParcelles = L.geoJSON(null, {
     onEachFeature: function (feature, layer) {
         // Appelée pour chaque parcelle : on lui attache sa popup
         layer.bindPopup(contenuPopup(feature.properties));
+        layer.on("popupopen", activerBoutonsPopup);   // extension : Modifier / Supprimer
     }
 }).addTo(map);
 
@@ -67,6 +73,7 @@ chargerParcelles();
 map.pm.setLang("fr");   // bulles d'aide de Geoman en français
 
 let dessinEnCours = null;   // polygone terminé mais pas encore enregistré
+let parcelleEnModification = null;   // extension : parcelle dont on modifie les attributs
 
 // Éléments du formulaire (définis dans index.html)
 const panneauParcelle = document.getElementById("panneau-parcelle");
@@ -74,6 +81,7 @@ const formParcelle = document.getElementById("form-parcelle");
 const messageParcelle = document.getElementById("message-parcelle");
 const champSuperficie = document.getElementById("champ-superficie");
 const boutonEnregistrer = document.getElementById("bouton-enregistrer");
+const titreFormulaire = document.getElementById("titre-formulaire");
 
 // ---------- Boutons « Nouvelle parcelle » et « Annuler » sur la carte ----------
 const controleDessin = L.control({ position: "topleft" });
@@ -147,6 +155,8 @@ function annulerDessin() {
         map.removeLayer(dessinEnCours); // efface un polygone terminé non enregistré
         dessinEnCours = null;
     }
+    parcelleEnModification = null;              // extension : on quitte aussi le mode modification
+    titreFormulaire.textContent = "Nouvelle parcelle";
     panneauParcelle.hidden = true;
 }
 
@@ -172,6 +182,12 @@ formParcelle.addEventListener("submit", async function (e) {
     }
     messageParcelle.textContent = erreur;
     if (erreur) return;
+
+    // Extension : en mode modification, on envoie les attributs avec PUT (voir plus bas)
+    if (parcelleEnModification) {
+        await enregistrerModification(num, agriculteur, culture, production);
+        return;
+    }
 
     boutonEnregistrer.disabled = true;   // évite un double envoi pendant la requête
     try {
@@ -210,3 +226,102 @@ formParcelle.addEventListener("submit", async function (e) {
         boutonEnregistrer.disabled = false;  // exécuté dans tous les cas
     }
 });
+
+// =====================================================================
+// Extension : modifier ou supprimer une parcelle depuis sa popup
+// =====================================================================
+
+// Leaflet recrée le contenu de la popup à chaque ouverture : on rebranche les boutons
+function activerBoutonsPopup(e) {
+    const parcelle = e.target;              // la parcelle dont la popup vient de s'ouvrir
+    const popup = e.popup.getElement();
+    popup.querySelector(".bouton-modifier").addEventListener("click", function () {
+        ouvrirModification(parcelle);
+    });
+    popup.querySelector(".bouton-supprimer").addEventListener("click", function () {
+        supprimerParcelle(parcelle);
+    });
+}
+
+// « Modifier » : le formulaire de F5, prérempli avec les attributs de la parcelle
+function ouvrirModification(parcelle) {
+    annulerDessin();                        // ferme un éventuel dessin en cours
+    map.closePopup();
+    parcelleEnModification = parcelle;
+    const p = parcelle.feature.properties;
+
+    formParcelle.reset();
+    messageParcelle.textContent = "";
+    titreFormulaire.textContent = "Modifier la parcelle";
+    document.getElementById("champ-num").value = p.num_parcelle;
+    document.getElementById("champ-agriculteur").value = p.agriculteur;
+    document.getElementById("champ-culture").value = p.culture;
+    document.getElementById("champ-production").value = p.production_t;
+    champSuperficie.value = p.superficie_ha.toFixed(2);   // le contour ne change pas
+    panneauParcelle.hidden = false;
+    document.getElementById("champ-num").focus();
+}
+
+// « Enregistrer » en mode modification : PUT /api/parcelles/<id>
+async function enregistrerModification(num, agriculteur, culture, production) {
+    const parcelle = parcelleEnModification;
+    boutonEnregistrer.disabled = true;
+    try {
+        const reponse = await fetch("/api/parcelles/" + parcelle.feature.properties.id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                num_parcelle: num,
+                agriculteur: agriculteur,
+                culture: culture,
+                production_t: production
+            })
+        });
+        const resultat = await reponse.json();
+        if (!reponse.ok) {
+            // 400, 404 ou 409 (numéro déjà pris) : message du serveur, saisie conservée
+            messageParcelle.textContent = resultat.erreur;
+            return;
+        }
+        // 200 : le serveur renvoie la parcelle modifiée ; on met à jour sa popup
+        parcelle.feature.properties = resultat.properties;
+        parcelle.setPopupContent(contenuPopup(resultat.properties));
+        annulerDessin();                    // ferme le formulaire
+        rafraichirWms();
+    } catch (err) {
+        messageParcelle.textContent = "Erreur de communication avec le serveur : " + err.message;
+    } finally {
+        boutonEnregistrer.disabled = false;
+    }
+}
+
+// « Supprimer » : confirmation, puis DELETE /api/parcelles/<id>
+async function supprimerParcelle(parcelle) {
+    const p = parcelle.feature.properties;
+    // confirm() affiche du texte brut : le numéro n'y est jamais interprété comme du HTML
+    if (!confirm("Supprimer définitivement la parcelle « " + p.num_parcelle + " » ?")) return;
+    try {
+        const reponse = await fetch("/api/parcelles/" + p.id, { method: "DELETE" });
+        const resultat = await reponse.json();
+        if (!reponse.ok) {
+            alert(resultat.erreur);
+            return;
+        }
+        map.closePopup();
+        // Si sa fenêtre NDVI est ouverte (ndvi.js), on la ferme aussi
+        if (typeof parcelleSelectionnee !== "undefined" && parcelleSelectionnee === parcelle) {
+            fermerFenetreNdvi();
+        }
+        coucheParcelles.removeLayer(parcelle);
+        rafraichirWms();
+    } catch (err) {
+        alert("Erreur de communication avec le serveur : " + err.message);
+    }
+}
+
+// Bonus MapServer : redemander les images WMS pour qu'elles suivent la base
+function rafraichirWms() {
+    if (typeof coucheWms !== "undefined") {
+        coucheWms.setParams({ maj: Date.now() });
+    }
+}

@@ -206,3 +206,17 @@ html, body {
     vertical-align: middle;
     border: 1px solid #555;
 }
+
+/* Extension : boutons Modifier / Supprimer dans la popup d'une parcelle */
+.boutons-popup { display: flex; gap: 6px; margin-top: 8px; }
+.bouton-popup {
+    padding: 3px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #999;
+    border-radius: 4px;
+}
+.bouton-popup:hover { background: #f0f0f0; }
+.bouton-supprimer { color: #c0392b; border-color: #c0392b; }
+
