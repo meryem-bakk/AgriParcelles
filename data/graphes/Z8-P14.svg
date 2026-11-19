@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="270" viewBox="0 0 480 270" font-family="Arial, sans-serif">
+<rect width="480" height="270" fill="white"/>
+<text x="42" y="20" font-size="15" font-weight="bold">Z8-P14 : Olivier</text>
+<text x="42" y="38" font-size="12" fill="#6B7280">NDVI : Vert toute l&#x27;année (agrumes, olivier, luzerne) (accord : )</text>
+<line x1="42" y1="203.6" x2="466" y2="203.6" stroke="#E5E7EB"/>
+<text x="36" y="207.6" font-size="11" fill="#6B7280" text-anchor="end">0.2</text>
+<line x1="42" y1="165.2" x2="466" y2="165.2" stroke="#E5E7EB"/>
+<text x="36" y="169.2" font-size="11" fill="#6B7280" text-anchor="end">0.4</text>
+<line x1="42" y1="126.8" x2="466" y2="126.8" stroke="#E5E7EB"/>
+<text x="36" y="130.8" font-size="11" fill="#6B7280" text-anchor="end">0.6</text>
+<line x1="42" y1="88.4" x2="466" y2="88.4" stroke="#E5E7EB"/>
+<text x="36" y="92.4" font-size="11" fill="#6B7280" text-anchor="end">0.8</text>
+<text x="58.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">S</text>
+<text x="93.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">O</text>
+<text x="129.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">N</text>
+<text x="164.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">D</text>
+<text x="200.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="236.5" y="262" font-size="11" fill="#6B7280" text-anchor="middle">F</text>
+<text x="269.1" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="305.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<text x="340.2" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="376.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="411.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="447.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<line x1="42" y1="242.0" x2="466" y2="242.0" stroke="#6B7280"/>
+<polyline points="44.3,166.0 53.6,159.7 56.0,162.7 59.5,164.3 71.1,164.2 79.3,163.1 82.8,161.4 88.6,165.9 100.2,162.8 102.6,162.6 111.9,158.6 114.2,165.3 125.9,162.6 129.4,163.5 135.2,154.4 137.5,156.5 149.2,156.9 160.8,157.3 164.3,166.6 195.8,127.1 240.0,125.7 245.8,138.6 280.8,157.4 288.9,162.2 298.3,186.4 309.9,155.7 323.9,151.9 335.5,166.0 344.9,165.1 347.2,167.4 350.7,173.1 356.5,160.8 358.8,166.1 362.3,166.8 368.2,165.2 370.5,168.0 374.0,169.4 379.8,168.8 385.6,167.8 391.5,167.1 393.8,166.6 397.3,166.8 403.1,160.5 405.4,163.9 408.9,162.2 414.7,162.0 417.1,161.8 420.6,167.1 426.4,162.7 428.7,163.9 432.2,160.2 438.0,156.8 443.9,163.0 449.7,148.6 452.0,151.3 455.5,151.2 463.7,153.6" fill="none" stroke="#2E6B3F" stroke-width="2"/>
+<circle cx="44.3" cy="166.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="53.6" cy="159.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="56.0" cy="162.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="59.5" cy="164.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="71.1" cy="164.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="79.3" cy="163.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="82.8" cy="161.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="88.6" cy="165.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="100.2" cy="162.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="102.6" cy="162.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="111.9" cy="158.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="114.2" cy="165.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="125.9" cy="162.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="129.4" cy="163.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="135.2" cy="154.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="137.5" cy="156.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="149.2" cy="156.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="160.8" cy="157.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="164.3" cy="166.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="195.8" cy="127.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="240.0" cy="125.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="245.8" cy="138.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="280.8" cy="157.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="288.9" cy="162.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="298.3" cy="186.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="309.9" cy="155.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="323.9" cy="151.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="335.5" cy="166.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="344.9" cy="165.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="347.2" cy="167.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="350.7" cy="173.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="356.5" cy="160.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="358.8" cy="166.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="362.3" cy="166.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="368.2" cy="165.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="370.5" cy="168.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="374.0" cy="169.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="379.8" cy="168.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="385.6" cy="167.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="391.5" cy="167.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="393.8" cy="166.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="397.3" cy="166.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="403.1" cy="160.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="405.4" cy="163.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="408.9" cy="162.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="414.7" cy="162.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="417.1" cy="161.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="420.6" cy="167.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="426.4" cy="162.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="428.7" cy="163.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="432.2" cy="160.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="438.0" cy="156.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="443.9" cy="163.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="449.7" cy="148.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="452.0" cy="151.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="455.5" cy="151.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="463.7" cy="153.6" r="2.2" fill="#2E6B3F"/>
+</svg>

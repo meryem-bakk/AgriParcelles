@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="270" viewBox="0 0 480 270" font-family="Arial, sans-serif">
+<rect width="480" height="270" fill="white"/>
+<text x="42" y="20" font-size="15" font-weight="bold">Z8-P15 : Autre</text>
+<text x="42" y="38" font-size="12" fill="#6B7280">NDVI : Culture d&#x27;hiver (céréale, betterave) (accord : )</text>
+<line x1="42" y1="203.6" x2="466" y2="203.6" stroke="#E5E7EB"/>
+<text x="36" y="207.6" font-size="11" fill="#6B7280" text-anchor="end">0.2</text>
+<line x1="42" y1="165.2" x2="466" y2="165.2" stroke="#E5E7EB"/>
+<text x="36" y="169.2" font-size="11" fill="#6B7280" text-anchor="end">0.4</text>
+<line x1="42" y1="126.8" x2="466" y2="126.8" stroke="#E5E7EB"/>
+<text x="36" y="130.8" font-size="11" fill="#6B7280" text-anchor="end">0.6</text>
+<line x1="42" y1="88.4" x2="466" y2="88.4" stroke="#E5E7EB"/>
+<text x="36" y="92.4" font-size="11" fill="#6B7280" text-anchor="end">0.8</text>
+<text x="58.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">S</text>
+<text x="93.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">O</text>
+<text x="129.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">N</text>
+<text x="164.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">D</text>
+<text x="200.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="236.5" y="262" font-size="11" fill="#6B7280" text-anchor="middle">F</text>
+<text x="269.1" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="305.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<text x="340.2" y="262" font-size="11" fill="#6B7280" text-anchor="middle">M</text>
+<text x="376.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="411.3" y="262" font-size="11" fill="#6B7280" text-anchor="middle">J</text>
+<text x="447.4" y="262" font-size="11" fill="#6B7280" text-anchor="middle">A</text>
+<line x1="42" y1="242.0" x2="466" y2="242.0" stroke="#6B7280"/>
+<polyline points="44.3,217.3 53.6,216.7 56.0,218.3 59.5,219.3 71.1,219.3 79.3,216.4 82.8,217.4 88.6,216.6 100.2,218.5 102.6,217.9 111.9,216.1 114.2,218.4 125.9,215.9 129.4,217.0 135.2,213.5 137.5,215.1 149.2,213.4 160.8,214.1 164.3,213.6 195.8,191.3 240.0,69.3 245.8,74.8 265.6,91.9 280.8,97.5 288.9,117.8 298.3,173.0 309.9,157.4 321.6,187.0 323.9,195.5 335.5,204.2 344.9,203.3 347.2,208.0 350.7,206.4 356.5,207.3 358.8,211.3 362.3,212.6 368.2,216.2 370.5,214.3 374.0,213.9 379.8,212.5 382.1,223.4 385.6,213.6 391.5,212.6 393.8,214.5 397.3,215.2 403.1,210.3 405.4,212.7 408.9,213.6 414.7,212.0 417.1,213.2 420.6,213.1 428.7,215.9 432.2,214.2 438.0,214.2 440.4,217.3 443.9,216.1 449.7,211.6 452.0,212.8 455.5,214.3 463.7,215.4" fill="none" stroke="#2E6B3F" stroke-width="2"/>
+<circle cx="44.3" cy="217.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="53.6" cy="216.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="56.0" cy="218.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="59.5" cy="219.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="71.1" cy="219.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="79.3" cy="216.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="82.8" cy="217.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="88.6" cy="216.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="100.2" cy="218.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="102.6" cy="217.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="111.9" cy="216.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="114.2" cy="218.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="125.9" cy="215.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="129.4" cy="217.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="135.2" cy="213.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="137.5" cy="215.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="149.2" cy="213.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="160.8" cy="214.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="164.3" cy="213.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="195.8" cy="191.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="240.0" cy="69.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="245.8" cy="74.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="265.6" cy="91.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="280.8" cy="97.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="288.9" cy="117.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="298.3" cy="173.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="309.9" cy="157.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="321.6" cy="187.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="323.9" cy="195.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="335.5" cy="204.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="344.9" cy="203.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="347.2" cy="208.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="350.7" cy="206.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="356.5" cy="207.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="358.8" cy="211.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="362.3" cy="212.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="368.2" cy="216.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="370.5" cy="214.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="374.0" cy="213.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="379.8" cy="212.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="382.1" cy="223.4" r="2.2" fill="#2E6B3F"/>
+<circle cx="385.6" cy="213.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="391.5" cy="212.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="393.8" cy="214.5" r="2.2" fill="#2E6B3F"/>
+<circle cx="397.3" cy="215.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="403.1" cy="210.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="405.4" cy="212.7" r="2.2" fill="#2E6B3F"/>
+<circle cx="408.9" cy="213.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="414.7" cy="212.0" r="2.2" fill="#2E6B3F"/>
+<circle cx="417.1" cy="213.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="420.6" cy="213.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="428.7" cy="215.9" r="2.2" fill="#2E6B3F"/>
+<circle cx="432.2" cy="214.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="438.0" cy="214.2" r="2.2" fill="#2E6B3F"/>
+<circle cx="440.4" cy="217.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="443.9" cy="216.1" r="2.2" fill="#2E6B3F"/>
+<circle cx="449.7" cy="211.6" r="2.2" fill="#2E6B3F"/>
+<circle cx="452.0" cy="212.8" r="2.2" fill="#2E6B3F"/>
+<circle cx="455.5" cy="214.3" r="2.2" fill="#2E6B3F"/>
+<circle cx="463.7" cy="215.4" r="2.2" fill="#2E6B3F"/>
+</svg>
